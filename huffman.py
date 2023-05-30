@@ -19,19 +19,61 @@ class Huffman:
 
     def build_freq_table(self):
         # Task 1
-        pass
+        for char in self.data:
+            if char in self.freq_table:
+                self.freq_table[char] += 1
+            else:
+                self.freq_table[char] = 1
 
     def build_tree(self):
         # Task 2
-        pass
+        if self.head is None:
+            return
+
+        while self.head.next is not None:
+            # Get the first two nodes of the list.
+            node1 = self.head
+            node2 = self.head.next
+
+            # Set the new head of the list (possibly None).
+            self.head = self.head.next.next
+
+            # Create new node and merge node1 and node2.
+            new_node = Huffman.HuffmanNode('-', node1.freq + node2.freq, left=node1, right=node2)
+
+            self.insert_sorted(new_node)
+
+        self.root = self.head
 
     def encode(self, s):
         # Task 3
-        pass
+        code = ''
+        for char in s:
+            if char not in self.encodings:
+                return None
+            code += self.encodings[char]
+        return code
 
     def decode(self, code):
         # Task 4
-        pass
+        i = 0
+        s = ''
+        while i < len(code):
+            trav = self.root
+            while i < len(code) and trav.left is not None and trav.right is not None:
+                if code[i] == '0':
+                    trav = trav.left
+                elif code[i] == '1':
+                    trav = trav.right
+                else:
+                    return None
+                i += 1
+
+            if i >= len(code) and trav.left is not None and trav.right is not None:
+                return None
+
+            s += trav.val
+        return s
 
     #
     # Note: you should NOT alter any of the following methods.
